@@ -39,5 +39,8 @@ Thank you so much.
 
 == Changelog ==
 
+= 0.2 =
+* fixed little bug on tracking code
+
 = 0.1 =
 * Welcome
