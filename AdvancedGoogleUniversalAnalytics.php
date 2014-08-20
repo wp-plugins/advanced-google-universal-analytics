@@ -155,7 +155,7 @@ class AdvancedGoogleUniversalAnalytics {
                                     foreach ($all_roles as $role => $v) {
                                         ?>
                                         <div class="role">
-                                            <input id="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>" type="checkbox" value="1" name="AI_GoogleUniversalAnalytics_track[notrack_roles][<?php echo esc_attr($role) ?>]" <?php echo $tmpusers['notrack_roles'][$role] == "1" ? 'checked' : ''; ?>>
+                                            <input id="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>" type="checkbox" value="1" name="AI_GoogleUniversalAnalytics_track[notrack_roles][<?php echo esc_attr($role) ?>]" <?php echo !empty($tmpusers) && $tmpusers['notrack_roles'][$role] == "1" ? 'checked' : ''; ?>>
                                             <label for="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>"><?php echo esc_attr($role) ?></label>
                                         </div>
                                         <?php
