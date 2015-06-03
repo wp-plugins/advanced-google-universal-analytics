@@ -3,8 +3,8 @@ Contributors: stefanoai
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=stefanoai%40stefanoai%2ecom&lc=IS&item_name=StefanoAI&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: advanced google universal analytics, wordpress universal analytics, wordpress google universal analytics, google universal analytics, google analytics, analytics, no track people, no track role
 Requires at least: 3.0.1
-Tested up to: 3.9.1
-Stable tag: 0.3
+Tested up to: 4.2.2
+Stable tag: 0.4
 License: GPLv2 or later
 
 Enter the tracking code for google analytics universal, in your wordpress site by simply putting your ID in the settings. 
@@ -38,6 +38,9 @@ Thank you so much.
 1. The Options page.
 
 == Changelog ==
+
+= 0.4 =
+* auto domain if empty field
 
 = 0.3 =
 * fixed warning print

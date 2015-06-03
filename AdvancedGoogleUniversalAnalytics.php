@@ -3,7 +3,7 @@
   Plugin Name: Advanced Google Universal Analytics 
   Description: Enter the tracking code for google analytics universal, in your wordpress site by simply putting your ID in the settings. You can also choose which role or user not will be tracked.
   Author: StefanoAI
-  Version: 0.3
+  Version: 0.4
   Author URI: http://www.stefanoai.com
  */
 
@@ -332,7 +332,7 @@ class AdvancedGoogleUniversalAnalytics {
             return;
         }
         $UA = get_option('AI_GoogleUniversalAnalytics_ID');
-        $domain = get_option('AI_GoogleUniversalAnalytics_domain');
+        $domain = get_option('AI_GoogleUniversalAnalytics_domain', 'auto');
         if (preg_match('/^UA\-[0-9]+[-]+[0-9]+$/', $UA) && preg_match('/^[^\']+$/', $domain)) {
             echo <<<JS
 <script>
