@@ -1,9 +1,9 @@
 <?php
 /*
-  Plugin Name: Advanced Google Universal Analytics 
-  Description: Enter the tracking code for google analytics universal, in your wordpress site by simply putting your ID in the settings. You can also choose which role or user not will be tracked.
+  Plugin Name: Advanced Google Universal Analytics
+  Description: Enter the tracking code for google analytics universal, in your wordpress site by simply putting your ID in the settings. You can also choose which role or user not will be tracked. You can track /wp-admin/ also
   Author: StefanoAI
-  Version: 0.4
+  Version: 0.5
   Author URI: http://www.stefanoai.com
  */
 
@@ -14,10 +14,15 @@ class AdvancedGoogleUniversalAnalytics {
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('wp_ajax_find_user', array($this, 'wp_ajax_find_user'));
         $header_footer = get_option('AI_GoogleUniversalAnalytics_headerfooter');
+        $wp_panel = get_option('AI_GoogleUniversalAnalytics_wp-panel');
         if ($header_footer == "header") {
             add_action('wp_head', array($this, 'track_code'), 999);
         } else {
             add_action('wp_footer', array($this, 'track_code'), 999);
+        }
+        if ($wp_panel) {
+            add_action('login_head', array($this, 'track_code'));
+            add_action('admin_footer', array($this, 'track_code'));
         }
     }
 
@@ -25,6 +30,7 @@ class AdvancedGoogleUniversalAnalytics {
         register_setting("AI-GoogleUniversalAnalytics", "AI_GoogleUniversalAnalytics_ID");
         register_setting("AI-GoogleUniversalAnalytics", "AI_GoogleUniversalAnalytics_domain");
         register_setting("AI-GoogleUniversalAnalytics", "AI_GoogleUniversalAnalytics_headerfooter");
+        register_setting("AI-GoogleUniversalAnalytics", "AI_GoogleUniversalAnalytics_wp-panel");
         register_setting("AI-GoogleUniversalAnalytics", "AI_GoogleUniversalAnalytics_track");
     }
 
@@ -107,6 +113,10 @@ class AdvancedGoogleUniversalAnalytics {
             #StefanoAI-GUA .users_ div.line input{
                 width: 250px;
             }
+            #StefanoAI-GUA div.line input[type=checkbox],
+            #StefanoAI-GUA div.line input[type=radio]{
+                width: auto;
+            }
             #StefanoAI-GUA .users_ div.line{
                 margin-bottom: 20px;
             }
@@ -127,6 +137,7 @@ class AdvancedGoogleUniversalAnalytics {
                         $trackid = get_option('AI_GoogleUniversalAnalytics_ID');
                         $domain = get_option('AI_GoogleUniversalAnalytics_domain');
                         $headerfooter = get_option('AI_GoogleUniversalAnalytics_headerfooter');
+                        $wp_panel = get_option('AI_GoogleUniversalAnalytics_wp-panel');
                         $tmpusers = get_option('AI_GoogleUniversalAnalytics_track');
                         ?>
                         <div id="tabs-1">
@@ -145,6 +156,10 @@ class AdvancedGoogleUniversalAnalytics {
                                     <option value="footer" <?php echo $headerfooter == 'footer' ? 'selected' : '' ?>>Footer</option>
                                 </select>
                             </div>
+                            <div class="line">
+                                <label for="wp-panel"><?php echo constant('AIGUA Loading on WP panel') ?></label>
+                                <input id="wp-panel" type="checkbox" name="AI_GoogleUniversalAnalytics_wp-panel" value="1" <?php echo!empty($wp_panel) ? 'checked' : ''; ?> />
+                            </div>
                         </div>
                         <div id="tabs-2">
                             <div id="roles">
@@ -155,7 +170,7 @@ class AdvancedGoogleUniversalAnalytics {
                                     foreach ($all_roles as $role => $v) {
                                         ?>
                                         <div class="role">
-                                            <input id="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>" type="checkbox" value="1" name="AI_GoogleUniversalAnalytics_track[notrack_roles][<?php echo esc_attr($role) ?>]" <?php echo is_array($tmpusers) && $tmpusers['notrack_roles'][$role] == "1" ? 'checked' : ''; ?>>
+                                            <input id="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>" type="checkbox" value="1" name="AI_GoogleUniversalAnalytics_track[notrack_roles][<?php echo esc_attr($role) ?>]" <?php echo is_array($tmpusers) && !empty($tmpusers['notrack_roles'][$role]) ? 'checked' : ''; ?>>
                                             <label for="AI_GoogleUniversalAnalytics_track_<?php echo esc_attr($role) ?>"><?php echo esc_attr($role) ?></label>
                                         </div>
                                         <?php
@@ -212,10 +227,10 @@ class AdvancedGoogleUniversalAnalytics {
             </div>
         </div>
         <script type="text/javascript">
-            jQuery(document).ready(function() {
+            jQuery(document).ready(function () {
                 jQuery("#tabs").tabs();
                 jQuery("#find_user").autocomplete({
-                    source: function(request, response) {
+                    source: function (request, response) {
                         jQuery.ajax({
                             url: ajaxurl,
                             dataType: 'json',
@@ -226,8 +241,8 @@ class AdvancedGoogleUniversalAnalytics {
                                 maxRows: 10,
                                 request: request.term
                             },
-                            success: function(data) {
-                                response(jQuery.map(data.users, function(item) {
+                            success: function (data) {
+                                response(jQuery.map(data.users, function (item) {
                                     return {
                                         label: item.firstname + " " + item.lastname + " " + item.email,
                                         name: item.firstname + " " + item.lastname + " " + item.nickname,
@@ -240,28 +255,28 @@ class AdvancedGoogleUniversalAnalytics {
                         });
                     },
                     minLength: 1,
-                    select: function(event, user) {
+                    select: function (event, user) {
                         jQuery("#users").append("<div class='user'><input type='hidden' name='AI_GoogleUniversalAnalytics_track[notrack_users][" + user.item.id + "]' value='1' />" + user.item.name + "<div class='delete button-secondary'>delete</div></div>");
                         AIUG_prepare_delete();
                     },
-                    open: function() {
+                    open: function () {
                         jQuery(this).removeClass("ui-corner-all").addClass("ui-corner-top");
                     },
-                    close: function() {
+                    close: function () {
                         jQuery(this).removeClass("ui-corner-top").addClass("ui-corner-all");
                     }
                 });
             });
             function AIUG_prepare_delete() {
-                jQuery("#users .delete").each(function() {
+                jQuery("#users .delete").each(function () {
                     if (jQuery(this).attr('hasJS') !== '1') {
-                        jQuery(this).click(function() {
+                        jQuery(this).click(function () {
                             jQuery(this).closest("div.user").remove();
                         });
                     }
                 });
             }
-            jQuery(document).ready(function() {
+            jQuery(document).ready(function () {
                 AIUG_prepare_delete();
             });
         </script>
@@ -351,8 +366,8 @@ JS;
 
 }
 
-if (file_exists(plugin_dir_path(__FILE__) . "lang/" . WPLANG . '.php')) {
-    include_once plugin_dir_path(__FILE__) . "lang/" . WPLANG . '.php';
+if (file_exists(plugin_dir_path(__FILE__) . "lang/" . get_locale() . '.php')) {
+    include_once plugin_dir_path(__FILE__) . "lang/" . get_locale() . '.php';
 } else {
     include_once plugin_dir_path(__FILE__) . "lang/en_US.php";
 }

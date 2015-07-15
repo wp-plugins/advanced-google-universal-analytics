@@ -8,5 +8,6 @@
 define("AIGUA TRACKING ID", "Tracking ID <tiny>(UA-XXXXXXXX-X)</tiny>");
 define("AIGUA Domain", "Domain");
 define("AIGUA Loading on", "Loading on");
+define("AIGUA Loading on WP panel", "Loading on WP Panel");
 define("AIGUA Find user", "Find user");
 define("AIGUA Don't Track", "No tracking code for");
